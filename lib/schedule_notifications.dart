@@ -8,7 +8,12 @@ class ScheduleNotifications {
 
   static Future<String> get platformVersion =>  _channel.invokeMethod('getPlatformVersion');
 
-  
+  static Future<Null> schedule(text, time, [repeatIn]) {
+    return _channel.invokeMethod('scheduleNotification', [text, time, [repeatIn]]);
+  }
 
+  static Future<Null> unschedule() {
+    return _channel.invokeMethod('unscheduleNotification');
+  }
 
 }
