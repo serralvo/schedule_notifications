@@ -12,7 +12,7 @@ import UserNotifications
 
 enum Methods: String {
     case schedule = "scheduleNotification"
-    case unschedule = "unscheduleNotification"
+    case unschedule = "unscheduleNotifications"
 }
     
 open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
@@ -34,11 +34,15 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         
         switch method {
         case .schedule:
-            self.register()
-            self.schedule(withTitle: "olá")
+            register()
+            
+            if let content = NotificationContent(withContent: call.arguments as? NSArray) {
+                schedule(withTitle: content.title)
+            }
+            
             result(nil)
         case .unschedule:
-            print("TODO :)")
+            unschedule()
             result(nil)
         }
         
@@ -79,4 +83,34 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         
     }
     
+    private func unschedule() {
+        UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ["schedule"])
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["schedule"])
+    }
+    
+}
+
+class NotificationContent {
+    
+    let title: String
+    let time: Int
+    let days: NSArray
+    
+    init?(withContent content: NSArray?) {
+        
+        guard let content = content else {
+            return nil
+        }
+        
+        if let title = content[0] as? String,
+            let time = content[1] as? Int,
+            let days = content[2] as? NSArray {
+            self.title = title
+            self.time = time
+            self.days = days
+        } else {
+            return nil
+        }
+        
+    }
 }

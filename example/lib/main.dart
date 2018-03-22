@@ -20,19 +20,11 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await ScheduleNotifications.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
 
     try {
-      ScheduleNotifications.schedule("olá", 10, []);
-      print("okk");
+      ScheduleNotifications.schedule("Hora de meditar", 10, [0, 1, 2]);
     } on Exception {
-      print("ooooops");
+      print("Whooops :x");
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -42,7 +34,7 @@ class _MyAppState extends State<MyApp> {
       return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _platformVersion = "";
     });
   }
 
