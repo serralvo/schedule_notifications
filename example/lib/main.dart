@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:schedule_notifications/schedule_notifications.dart';
+import 'package:schedule_notifications_example/time_picker.dart';
 
 void main() => runApp(new MyApp());
 
@@ -10,32 +10,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  DateTime _selectedTime = new DateTime.now();
 
   @override
   initState() {
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  initPlatformState() async {
-
-    try {
-      ScheduleNotifications.schedule("Hora de meditar", 10, [0, 1, 2]);
-    } on Exception {
-      print("Whooops :x");
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted)
-      return;
-
-    setState(() {
-      _platformVersion = "";
-    });
   }
 
   @override
@@ -45,10 +24,36 @@ class _MyAppState extends State<MyApp> {
         appBar: new AppBar(
           title: new Text('Plugin example app'),
         ),
-        body: new Center(
-          child: new Text('Running on: $_platformVersion\n'),
+        body: new Container(
+            child: new Center(
+              child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    new DateTimeItem(
+                    dateTime: _selectedTime,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedTime = value;
+                          });
+                        }
+                    ),
+                    new RaisedButton(
+                      child: const Text('SCHEDULE'),
+                      onPressed: scheduleAlarm,
+                    ),
+                  ]
+              ),
+            )
         ),
       ),
     );
+  }
+
+  void scheduleAlarm() {
+    try {
+      ScheduleNotifications.schedule("Hora de meditar", _selectedTime.toString(), [0, 1, 2]);
+    } on Exception {
+      print("Whooops :x");
+    }
   }
 }
