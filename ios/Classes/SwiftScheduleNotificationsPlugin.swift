@@ -67,6 +67,14 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         let content = UNMutableNotificationContent()
         content.body = title
         
+        var dateComponents = DateComponents()
+        // a more realistic example for Gregorian calendar. Every Monday at 11:30AM
+        dateComponents.hour = 11
+        dateComponents.minute = 30
+        dateComponents.second = 0
+        dateComponents.weekday = 2
+        // starts at sunday, value is 1
+        
         let date = Date(timeIntervalSinceNow: 5)
         let triggerDate = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: date)
         let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: true)
@@ -93,8 +101,8 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
 class NotificationContent {
     
     let title: String
-    let time: Int
-    let days: NSArray
+    let when: String
+    var repeatAt: [Int] = []
     
     init?(withContent content: NSArray?) {
         
@@ -103,11 +111,17 @@ class NotificationContent {
         }
         
         if let title = content[0] as? String,
-            let time = content[1] as? Int,
-            let days = content[2] as? NSArray {
+            let whenRaw = content[1] as? String,
+            let repeatAtRaw = content[2] as? [Int] {
             self.title = title
-            self.time = time
-            self.days = days
+            self.when = whenRaw
+            self.repeatAt = repeatAtRaw.map({ (weekDayRaw: Int) -> Int in
+                if weekDayRaw == 7 {
+                    return 1
+                } else {
+                    return weekDayRaw + 1
+                }
+            })
         } else {
             return nil
         }
