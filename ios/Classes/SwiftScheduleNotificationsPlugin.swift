@@ -37,7 +37,7 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
             register()
             
             if let content = NotificationContent(withContent: call.arguments as? NSArray) {
-                schedule(withTitle: content.title)
+                schedule(content)
             }
             
             result(nil)
@@ -62,23 +62,23 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         
     }
     
-    private func schedule(withTitle title: String) {
+    private func schedule(_ notification: NotificationContent) {
         
         let content = UNMutableNotificationContent()
-        content.body = title
+        content.body = notification.title
         
-        var dateComponents = DateComponents()
-        // a more realistic example for Gregorian calendar. Every Monday at 11:30AM
-        dateComponents.hour = 11
-        dateComponents.minute = 30
-        dateComponents.second = 0
-        dateComponents.weekday = 2
-        // starts at sunday, value is 1
+        var dateComponents: DateComponents?
         
-        let date = Date(timeIntervalSinceNow: 5)
-        let triggerDate = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second,], from: date)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: true)
+        if notification.shouldRepeat {
+            for day in notification.repeatAt {
+                print("Should repeat at \(day)")
+            }
+            
+        } else {
+            dateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: notification.when)
+        }
         
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents!, repeats: notification.shouldRepeat)
         let request = UNNotificationRequest(identifier: "schedule", content: content, trigger: trigger)
     
         UNUserNotificationCenter.current().add(request, withCompletionHandler: { (error) in
