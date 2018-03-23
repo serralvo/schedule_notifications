@@ -1,5 +1,5 @@
 //
-//  TextFieldCounter.swift
+//  SwiftScheduleNotificationsPlugin.swift
 //  ScheduleNotifications
 //
 //  Created by Fabricio Serralvo on 3/21/18.
@@ -101,8 +101,11 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
 class NotificationContent {
     
     let title: String
-    let when: String
+    let when: Date
     var repeatAt: [Int] = []
+    var shouldRepeat: Bool {
+        return repeatAt.isEmpty == false
+    }
     
     init?(withContent content: NSArray?) {
         
@@ -112,9 +115,10 @@ class NotificationContent {
         
         if let title = content[0] as? String,
             let whenRaw = content[1] as? String,
+            let date = NotificationContent.date(withRaw: whenRaw),
             let repeatAtRaw = content[2] as? [Int] {
             self.title = title
-            self.when = whenRaw
+            self.when = date
             self.repeatAt = repeatAtRaw.map({ (weekDayRaw: Int) -> Int in
                 if weekDayRaw == 7 {
                     return 1
@@ -126,5 +130,12 @@ class NotificationContent {
             return nil
         }
         
+    }
+    
+    class func date(withRaw raw: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS"
+        return formatter.date(from:raw)
     }
 }
