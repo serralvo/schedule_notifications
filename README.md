@@ -1,10 +1,31 @@
-# schedule_notifications
+# Schedule Notifications
+    A Flutter plugin 🛠 to schedule Local Notifications. Ready for iOS and Android 🚀
 
-A new flutter plugin project.
+[![License][license-image]][license-url]
 
-## Getting Started
+## Features
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+- [x] Send local notifications to iOS and Android 📢
+- [x] Schedule notifications ⏰
 
-For help on editing plugin code, view the [documentation](https://flutter.io/platform-plugins/#edit-code).
+## Requirements
+
+- iOS 10.0+
+- Android API 
+
+## Installation
+
+## Contribute
+
+We would ❤️ to see your contribution!
+
+## License
+
+Distributed under the MIT license. See ``LICENSE`` for more information.
+
+## About
+
+Created by Fabricio Serralvo [serralvo.co](https://serralvo.co) and Marcos Aoki.
+
+[license-image]: https://img.shields.io/badge/License-MIT-blue.svg
+[license-url]: LICENSE
