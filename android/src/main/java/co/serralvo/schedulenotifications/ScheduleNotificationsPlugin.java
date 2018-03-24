@@ -89,7 +89,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
         Date date = convertToDate(when);
 
         if (repeatAt.size() > 0) {
-            scheduleRepeatNotification(date, title);
+            scheduleRepeatNotification(date, title, repeatAt);
         } else {
             scheduleOneShotNotification(date, title);
         }
@@ -122,9 +122,18 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      *
      * @param when Date to schedule.
      * @param title Notification title.
+     * @param repeatAt Days to repeat notification.
      */
-    private void scheduleRepeatNotification(Date when, String title) {
-        // TODO: implement method.
+    private void scheduleRepeatNotification(Date when, String title, List<Integer> repeatAt) {
+        Calendar calendar = Calendar.getInstance();
+        for (int day : repeatAt) {
+            calendar.setTime(when);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.DAY_OF_WEEK, day + 1);
+            Date scheduleDate = calendar.getTime();
+            mAlarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(),
+                AlarmManager.INTERVAL_DAY * 7, getNotificationIntent(title));
+        }
     }
 
     /**
