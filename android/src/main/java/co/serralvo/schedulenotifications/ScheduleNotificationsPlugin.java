@@ -1,10 +1,15 @@
 package co.serralvo.schedulenotifications;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -25,9 +30,19 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
     private static final String LOG_TAG = ScheduleNotificationsPlugin.class.getSimpleName();
 
     /**
+     * Schedule notification method name.
+     */
+    private static final String SCHEDULE_NOTIFICATION_METHOD_NAME = "scheduleNotification";
+
+    /**
      * Receiver of registrations from a single plugin.
      */
     private static Registrar mRegistrar;
+
+    /**
+     * Alarm manager.
+     */
+    private AlarmManager mAlarmManager;
 
     /**
      * Plugin registration.
@@ -40,12 +55,12 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        if (call.method.equals("scheduleNotification")) {
+        mAlarmManager = (AlarmManager) getActiveContext().getSystemService(Context.ALARM_SERVICE);
 
+        if (call.method.equals(SCHEDULE_NOTIFICATION_METHOD_NAME)) {
             if (call.arguments != null && call.arguments instanceof List) {
                 scheduleNotification((List<Object>) call.arguments);
             }
-
             result.success("Android " + android.os.Build.VERSION.RELEASE);
         } else {
             result.notImplemented();
@@ -70,6 +85,59 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
         String title = (String) arguments.get(0);
         String when = (String) arguments.get(1);
         List<Integer> repeatAt = (List<Integer>) arguments.get(2);
+
+        Date date = convertToDate(when);
+
+        if (repeatAt.size() > 0) {
+            scheduleRepeatNotification(date, title);
+        } else {
+            scheduleOneShotNotification(date, title);
+        }
+    }
+
+    /**
+     * Schedule one shot notification.
+     *
+     * @param when Date to schedule.
+     * @param title Notification title.
+     */
+    private void scheduleOneShotNotification(Date when, String title) {
+        if (when != null) {
+            Date now = new Date();
+            Date scheduleDate;
+            if (when.getTime() > now.getTime()) {
+                scheduleDate = when;
+            } else {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(when);
+                calendar.add(Calendar.DATE, 1);
+                scheduleDate = calendar.getTime();
+            }
+            mAlarmManager.set(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(), getNotificationIntent(title));
+        }
+    }
+
+    /**
+     * Schedule repeat notification.
+     *
+     * @param when Date to schedule.
+     * @param title Notification title.
+     */
+    private void scheduleRepeatNotification(Date when, String title) {
+        // TODO: implement method.
+    }
+
+    /**
+     * Get the notification intent.
+     *
+     * @param title Notification title
+     *
+     * @return Notification Intent.
+     */
+    private PendingIntent getNotificationIntent(String title) {
+        Intent intent = new Intent(getActiveContext(), AlarmReceiver.class);
+        intent.putExtra(IntentConstants.TITLE_PARAM, title);
+        return PendingIntent.getBroadcast(getActiveContext(), 0, intent, 0);
     }
 
     /**
