@@ -67,33 +67,50 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         let content = UNMutableNotificationContent()
         content.body = notification.title
         
-        var dateComponents: DateComponents?
-        
         if notification.shouldRepeat {
+        
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: notification.when)
+            let minute = calendar.component(.minute, from: notification.when)
+        
+            var dateComponents = DateComponents()
+            
             for day in notification.repeatAt {
-                print("Should repeat at \(day)")
+                dateComponents.hour = hour
+                dateComponents.minute = minute
+                dateComponents.weekday = day
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+                fire(withContent: content, trigger: trigger)
             }
             
         } else {
-            dateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: notification.when)
+            
+            let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: notification.when)
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+            
+            fire(withContent: content, trigger: trigger)
         }
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents!, repeats: notification.shouldRepeat)
-        let request = UNNotificationRequest(identifier: "schedule", content: content, trigger: trigger)
     
-        UNUserNotificationCenter.current().add(request, withCompletionHandler: { (error) in
-            if let error = error {
-                print("error: \(error.localizedDescription)")
-            } else {
-                print("Hell yeah!")
-            }
-        })
-        
     }
     
     private func unschedule() {
         UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: ["schedule"])
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["schedule"])
+    }
+ 
+    private func fire(withContent content: UNNotificationContent, trigger: UNCalendarNotificationTrigger) {
+        
+        let request = UNNotificationRequest(identifier: "schedule", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: { (error) in
+            if let error = error {
+                print("Error: \(error.localizedDescription)")
+            } else {
+                print("Notification has been scheduled.")
+            }
+        })
+        
     }
     
 }

@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
 
   void scheduleAlarm() {
     try {
-      ScheduleNotifications.schedule("Hora de meditar", _selectedTime, [DateTime.sunday, DateTime.monday]);
+      ScheduleNotifications.schedule("Hora de meditar", _selectedTime, [DateTime.friday]);
     } on Exception {
       print("Whooops :x");
     }
