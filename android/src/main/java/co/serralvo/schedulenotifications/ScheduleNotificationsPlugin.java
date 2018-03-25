@@ -34,6 +34,11 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
     private static final String SCHEDULE_NOTIFICATION_METHOD_NAME = "scheduleAndroidNotification";
 
     /**
+     * Unschedule notification method name.
+     */
+    private static final String UNSCHEDULE_NOTIFICATION_METHOD_NAME = "unscheduleNotifications";
+
+    /**
      * Receiver of registrations from a single plugin.
      */
     private static Registrar mRegistrar;
@@ -56,13 +61,17 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
     public void onMethodCall(MethodCall call, Result result) {
         mAlarmManager = (AlarmManager) getActiveContext().getSystemService(Context.ALARM_SERVICE);
 
-        if (call.method.equals(SCHEDULE_NOTIFICATION_METHOD_NAME)) {
-            if (call.arguments != null && call.arguments instanceof List) {
-                scheduleNotification((List<Object>) call.arguments);
-            }
-            result.success("Android " + android.os.Build.VERSION.RELEASE);
-        } else {
-            result.notImplemented();
+        switch (call.method) {
+            case SCHEDULE_NOTIFICATION_METHOD_NAME:
+                if (call.arguments != null && call.arguments instanceof List) {
+                    scheduleNotification((List<Object>) call.arguments);
+                }
+                break;
+            case UNSCHEDULE_NOTIFICATION_METHOD_NAME:
+                unscheduleNotifications();
+                break;
+            default:
+                result.notImplemented();
         }
     }
 
@@ -81,6 +90,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      * @param arguments Method arguments.
      */
     private void scheduleNotification(List<Object> arguments) {
+        unscheduleNotifications();
         String title = (String) arguments.get(0);
         String when = (String) arguments.get(1);
         List<Integer> repeatAt = (List<Integer>) arguments.get(2);
@@ -129,6 +139,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      */
     private void scheduleRepeatNotification(Date when, String title, List<Integer> repeatAt, int icon) {
         Calendar calendar = Calendar.getInstance();
+        PendingIntent notificationIntent = getNotificationIntent(title, icon);
         for (int day : repeatAt) {
             calendar.setTime(when);
             calendar.set(Calendar.SECOND, 0);
@@ -136,8 +147,20 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
             Date scheduleDate = calendar.getTime();
             Log.i(LOG_TAG, "Scheduling alarm: " + scheduleDate);
             mAlarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(),
-                AlarmManager.INTERVAL_DAY * 7, getNotificationIntent(title, icon));
+                AlarmManager.INTERVAL_DAY * 7, notificationIntent);
         }
+    }
+
+    /**
+     * Unschedule notifications.
+     */
+    private void unscheduleNotifications() {
+        Log.i(LOG_TAG, "Unscheduling alarms");
+
+        Intent intent = new Intent(getActiveContext(), AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActiveContext(), 0, intent, 0);
+        pendingIntent.cancel();
+        mAlarmManager.cancel(pendingIntent);
     }
 
     /**

@@ -17,9 +17,13 @@ class _MyAppState extends State<MyApp> {
 
   DateTime _selectedTime = new DateTime.now();
 
+  int _iconResourceId;
+
   @override
   initState() {
     super.initState();
+
+    _getIconResourceId();
   }
 
   @override
@@ -32,7 +36,6 @@ class _MyAppState extends State<MyApp> {
         body: new Container(
             child: new Center(
               child: new Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     new DateTimeItem(
                     dateTime: _selectedTime,
@@ -46,12 +49,30 @@ class _MyAppState extends State<MyApp> {
                       child: const Text('SCHEDULE'),
                       onPressed: _scheduleAlarm,
                     ),
+                    const SizedBox(height: 20.0),
+                    new RaisedButton(
+                      child: const Text('UNSCHEDULE'),
+                      onPressed: _unscheduleAlarm,
+                    ),
                   ]
               ),
             )
         ),
       ),
     );
+  }
+
+  Future<Null> _getIconResourceId() async {
+    int iconResourceId;
+    try {
+      iconResourceId = await _platform.invokeMethod('getIconResourceId');
+    } on PlatformException catch (e) {
+      print("Error on get icon resource id: x");
+    }
+
+    setState(() {
+      _iconResourceId = iconResourceId;
+    });
   }
 
   void _scheduleAlarm() {
@@ -66,20 +87,19 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<Null> _scheduleAndroidAlarm() async {
-    int iconResourceId;
+  void _scheduleAndroidAlarm() {
     try {
-      iconResourceId = await _platform.invokeMethod('getIconResourceId');
-    } on PlatformException catch (e) {
-      print("Error on get icon resource id: x");
+      ScheduleNotifications.scheduleAndroid("Hora de meditar", _selectedTime, [DateTime.saturday, DateTime.sunday], _iconResourceId);
+    } on Exception {
+      print("Whooops :x");
     }
+  }
 
-    setState(() {
-      try {
-        ScheduleNotifications.scheduleAndroid("Hora de meditar", _selectedTime, [], iconResourceId);
-      } on Exception {
-        print("Whooops :x");
-      }
-    });
+  void _unscheduleAlarm() {
+    try {
+      ScheduleNotifications.unschedule();
+    } on Exception {
+      print("Whooops :x");
+    }
   }
 }
