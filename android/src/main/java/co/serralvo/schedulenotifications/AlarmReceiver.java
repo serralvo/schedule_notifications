@@ -32,6 +32,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra(IntentConstants.TITLE_PARAM);
+        int icon = intent.getIntExtra(IntentConstants.ICON_PARAM, 0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT);
@@ -41,8 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                // TODO: get the app icon.
-                .setSmallIcon(2131296256)
+                .setSmallIcon(icon)
                 .setContentTitle(title)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         // TODO: implement click.

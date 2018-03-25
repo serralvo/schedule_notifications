@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 import 'package:schedule_notifications/schedule_notifications.dart';
 import 'package:schedule_notifications_example/time_picker.dart';
 
@@ -10,6 +13,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  static const _platform = const MethodChannel('schedule_notifications_app');
+
   DateTime _selectedTime = new DateTime.now();
 
   @override
@@ -39,7 +44,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                     new RaisedButton(
                       child: const Text('SCHEDULE'),
-                      onPressed: scheduleAlarm,
+                      onPressed: _scheduleAlarm,
                     ),
                   ]
               ),
@@ -49,11 +54,32 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void scheduleAlarm() {
+  void _scheduleAlarm() {
+    defaultTargetPlatform == TargetPlatform.iOS ? _scheduleiOSAlarm() : _scheduleAndroidAlarm();
+  }
+
+  void _scheduleiOSAlarm() {
     try {
-      ScheduleNotifications.schedule("Hora de meditar", _selectedTime, [DateTime.friday]);
+      ScheduleNotifications.schedule("Hora de meditar", _selectedTime, [DateTime.saturday]);
     } on Exception {
       print("Whooops :x");
     }
+  }
+
+  Future<Null> _scheduleAndroidAlarm() async {
+    int iconResourceId;
+    try {
+      iconResourceId = await _platform.invokeMethod('getIconResourceId');
+    } on PlatformException catch (e) {
+      print("Error on get icon resource id: x");
+    }
+
+    setState(() {
+      try {
+        ScheduleNotifications.scheduleAndroid("Hora de meditar", _selectedTime, [], iconResourceId);
+      } on Exception {
+        print("Whooops :x");
+      }
+    });
   }
 }

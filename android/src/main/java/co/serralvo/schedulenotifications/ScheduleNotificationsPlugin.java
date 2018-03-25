@@ -32,7 +32,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
     /**
      * Schedule notification method name.
      */
-    private static final String SCHEDULE_NOTIFICATION_METHOD_NAME = "scheduleNotification";
+    private static final String SCHEDULE_NOTIFICATION_METHOD_NAME = "scheduleAndroidNotification";
 
     /**
      * Receiver of registrations from a single plugin.
@@ -85,13 +85,14 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
         String title = (String) arguments.get(0);
         String when = (String) arguments.get(1);
         List<Integer> repeatAt = (List<Integer>) arguments.get(2);
+        int icon = (int) arguments.get(3);
 
         Date date = convertToDate(when);
 
         if (repeatAt.size() > 0) {
-            scheduleRepeatNotification(date, title, repeatAt);
+            scheduleRepeatNotification(date, title, repeatAt, icon);
         } else {
-            scheduleOneShotNotification(date, title);
+            scheduleOneShotNotification(date, title, icon);
         }
     }
 
@@ -100,8 +101,9 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      *
      * @param when Date to schedule.
      * @param title Notification title.
+     * @param icon Icon resource ID.
      */
-    private void scheduleOneShotNotification(Date when, String title) {
+    private void scheduleOneShotNotification(Date when, String title, int icon) {
         if (when != null) {
             Date now = new Date();
             Date scheduleDate;
@@ -113,7 +115,8 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
                 calendar.add(Calendar.DATE, 1);
                 scheduleDate = calendar.getTime();
             }
-            mAlarmManager.set(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(), getNotificationIntent(title));
+            Log.i(LOG_TAG, "Scheduling alarm: " + scheduleDate);
+            mAlarmManager.set(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(), getNotificationIntent(title, icon));
         }
     }
 
@@ -123,16 +126,18 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      * @param when Date to schedule.
      * @param title Notification title.
      * @param repeatAt Days to repeat notification.
+     * @param icon Icon resource ID.
      */
-    private void scheduleRepeatNotification(Date when, String title, List<Integer> repeatAt) {
+    private void scheduleRepeatNotification(Date when, String title, List<Integer> repeatAt, int icon) {
         Calendar calendar = Calendar.getInstance();
         for (int day : repeatAt) {
             calendar.setTime(when);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.DAY_OF_WEEK, day + 1);
             Date scheduleDate = calendar.getTime();
+            Log.i(LOG_TAG, "Scheduling alarm: " + scheduleDate);
             mAlarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(),
-                AlarmManager.INTERVAL_DAY * 7, getNotificationIntent(title));
+                AlarmManager.INTERVAL_DAY * 7, getNotificationIntent(title, icon));
         }
     }
 
@@ -140,12 +145,14 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      * Get the notification intent.
      *
      * @param title Notification title
+     * @param icon Icon resource ID.
      *
      * @return Notification Intent.
      */
-    private PendingIntent getNotificationIntent(String title) {
+    private PendingIntent getNotificationIntent(String title, int icon) {
         Intent intent = new Intent(getActiveContext(), AlarmReceiver.class);
         intent.putExtra(IntentConstants.TITLE_PARAM, title);
+        intent.putExtra(IntentConstants.ICON_PARAM, icon);
         return PendingIntent.getBroadcast(getActiveContext(), 0, intent, 0);
     }
 
