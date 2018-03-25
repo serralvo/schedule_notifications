@@ -2,6 +2,7 @@ package co.serralvo.schedulenotifications;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -41,11 +42,17 @@ public class AlarmReceiver extends BroadcastReceiver {
             mNotificationManager.createNotificationChannel(channel);
         }
 
+        Intent actionIntent = context.getPackageManager()
+                    .getLaunchIntentForPackage(context.getPackageName());
+        PendingIntent actionPendingIntent = PendingIntent.getActivity(context, 0,
+                    actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(icon)
                 .setContentTitle(title)
+                .setContentIntent(actionPendingIntent)
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        // TODO: implement click.
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
