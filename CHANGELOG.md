@@ -1,3 +1,7 @@
+## [0.0.3] - 2018/03/26
+
+* Small changes.
+
 ## [0.0.2] - 2018/03/26
 
 * Some changes in dependencies.
