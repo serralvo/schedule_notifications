@@ -33,7 +33,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra(IntentConstants.TITLE_PARAM);
-        int icon = intent.getIntExtra(IntentConstants.ICON_PARAM, 0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT);
@@ -43,12 +42,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         Intent actionIntent = context.getPackageManager()
-                    .getLaunchIntentForPackage(context.getPackageName());
+                .getLaunchIntentForPackage(context.getPackageName());
         PendingIntent actionPendingIntent = PendingIntent.getActivity(context, 0,
-                    actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(icon)
+                .setSmallIcon(NotificationSingleton.getInstance().getNotificationIcon())
                 .setContentTitle(title)
                 .setContentIntent(actionPendingIntent)
                 .setAutoCancel(true)

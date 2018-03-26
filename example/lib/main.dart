@@ -18,8 +18,6 @@ class _MyAppState extends State<MyApp> {
 
   DateTime _selectedTime = new DateTime.now();
 
-  int _iconResourceId;
-
   @override
   initState() {
     super.initState();
@@ -73,25 +71,13 @@ class _MyAppState extends State<MyApp> {
     }
 
     setState(() {
-      _iconResourceId = iconResourceId;
+      ScheduleNotifications.setNotificationIcon(iconResourceId);
     });
   }
 
   void _scheduleAlarm() {
-    defaultTargetPlatform == TargetPlatform.iOS ? _scheduleiOSAlarm() : _scheduleAndroidAlarm();
-  }
-
-  void _scheduleiOSAlarm() {
     try {
-      ScheduleNotifications.schedule("Hora de meditar", _selectedTime, [DateTime.saturday]);
-    } on Exception {
-      print("Whooops :x");
-    }
-  }
-
-  void _scheduleAndroidAlarm() {
-    try {
-      ScheduleNotifications.scheduleAndroid("Hora de meditar", _selectedTime, [DateTime.saturday, DateTime.sunday], _iconResourceId);
+      ScheduleNotifications.schedule("Hora de meditar", _selectedTime, []);
     } on Exception {
       print("Whooops :x");
     }
