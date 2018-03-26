@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:schedule_notifications/schedule_notifications.dart';
+import 'package:schedule_notifications_example/time_picker.dart';
+
 
 void main() => runApp(new MyApp());
 
@@ -21,7 +23,9 @@ class _MyAppState extends State<MyApp> {
   @override
   initState() {
     super.initState();
-    // _getIconResourceId();
+    if (defaultTargetPlatform == TargetPlatform.android) {
+       _getIconResourceId();
+    }
   }
 
   @override
