@@ -19,7 +19,7 @@ Add this to your package's pubspec.yaml file:
 
 ```
 dependencies:
-  schedule_notifications: "^0.0.3"
+  schedule_notifications: "^0.0.4"
 ```
 
 ## Contribute
@@ -32,7 +32,7 @@ Distributed under the MIT license. See ``LICENSE`` for more information.
 
 ## About
 
-Created by Fabricio Serralvo [serralvo.co](https://serralvo.co) and Marcos Aoki.
+Created by Fabricio Serralvo and Marcos Aoki.
 
 [license-image]: https://img.shields.io/badge/License-MIT-blue.svg
 [license-url]: LICENSE
