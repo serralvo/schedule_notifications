@@ -10,10 +10,17 @@
 
 ## Requirements
 
-- iOS 10.0+
-- Android API 
+- iOS: Version 10.0+
+- Android: minSdkVersion 16
 
 ## Installation
+
+Add this to your package's pubspec.yaml file:
+
+```
+dependencies:
+  schedule_notifications: "^0.0.3"
+```
 
 ## Contribute
 
