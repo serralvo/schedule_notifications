@@ -1,7 +1,7 @@
 name: schedule_notifications
 description: A Flutter plugin to schedule Local Notifications. Ready for iOS and Android
-version: 0.0.1
-author: Fabricio Serralvo <fabricio.serralvo@gmail.com>
+version: 0.0.2
+author: Fabricio Serralvo <fabricio.serralvo@gmail.com> Marcos Aoki <yancomul@gmail.com>
 homepage: https://github.com/serralvo/schedule_notifications
 
 dependencies:

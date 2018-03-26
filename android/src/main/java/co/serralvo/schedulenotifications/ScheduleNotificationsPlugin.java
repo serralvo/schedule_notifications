@@ -90,7 +90,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      * @param arguments Method arguments.
      */
     private void scheduleNotification(List<Object> arguments) {
-        unscheduleNotifications();
+
         String title = (String) arguments.get(0);
         String when = (String) arguments.get(1);
         List<Integer> repeatAt = (List<Integer>) arguments.get(2);
