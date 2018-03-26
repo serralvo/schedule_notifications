@@ -13,6 +13,7 @@ import UserNotifications
 enum Methods: String {
     case schedule = "scheduleNotification"
     case unschedule = "unscheduleNotifications"
+    case requestAuthorization = "requestAuthorization"
 }
     
 open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
@@ -34,15 +35,15 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         
         switch method {
         case .schedule:
-            register()
-            
             if let content = NotificationContent(withContent: call.arguments as? NSArray) {
                 schedule(content)
             }
-            
             result(nil)
         case .unschedule:
             unschedule()
+            result(nil)
+        case .requestAuthorization:
+            requestAuthorization()
             result(nil)
         }
         
@@ -50,7 +51,7 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
     
     // MARK: Private
     
-    private func register() {
+    private func requestAuthorization() {
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (success, error) in
             if !success {
@@ -133,7 +134,7 @@ class NotificationContent {
         if let title = content[0] as? String,
             let whenRaw = content[1] as? String,
             let date = NotificationContent.date(withRaw: whenRaw),
-            let repeatAtRaw = content[2] as? [Int] {
+            let repeatAtRaw = content[2] as? [Int] { // TODO: Check with an empty array
             self.title = title
             self.when = date
             self.repeatAt = repeatAtRaw.map({ (weekDayRaw: Int) -> Int in

@@ -17,9 +17,14 @@ class ScheduleNotifications {
     return _channel.invokeMethod('unscheduleNotifications');
   }
 
-  // int icon: Icon resource ID.
+  // Android only
   static Future<Null> setNotificationIcon(int icon) {
     return _channel.invokeMethod('setNotificationIcon', [icon]);
+  }
+
+  // iOS only
+  static Future<Null> requestAuthorization() {
+    return _channel.invokeMethod('requestAuthorization');
   }
 
 }
