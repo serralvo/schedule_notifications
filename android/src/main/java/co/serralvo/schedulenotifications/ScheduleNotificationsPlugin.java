@@ -142,7 +142,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
                 scheduleDate = calendar.getTime();
             }
             Log.i(LOG_TAG, "Scheduling alarm: " + scheduleDate);
-            mAlarmManager.set(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(), getNotificationIntent(title));
+            mAlarmManager.set(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(), getNotificationIntent(title, 0));
         }
     }
 
@@ -155,7 +155,6 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      */
     private void scheduleRepeatNotification(Date when, String title, List<Integer> repeatAt) {
         Calendar calendar = Calendar.getInstance();
-        PendingIntent notificationIntent = getNotificationIntent(title);
         for (int day : repeatAt) {
             calendar.setTime(when);
             calendar.set(Calendar.SECOND, 0);
@@ -163,7 +162,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
             Date scheduleDate = calendar.getTime();
             Log.i(LOG_TAG, "Scheduling alarm: " + scheduleDate);
             mAlarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, scheduleDate.getTime(),
-                    AlarmManager.INTERVAL_DAY * 7, notificationIntent);
+                    AlarmManager.INTERVAL_DAY * 7, getNotificationIntent(title, day));
         }
     }
 
@@ -173,22 +172,25 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
     private void unscheduleNotifications() {
         Log.i(LOG_TAG, "Unscheduling alarms");
 
-        Intent intent = new Intent(getActiveContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActiveContext(), 0, intent, 0);
-        pendingIntent.cancel();
-        mAlarmManager.cancel(pendingIntent);
+        for (int day = 0; day <= 7; day++) {
+            Intent intent = new Intent(getActiveContext(), AlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActiveContext(), day, intent, 0);
+            pendingIntent.cancel();
+            mAlarmManager.cancel(pendingIntent);
+        }
     }
 
     /**
      * Get the notification intent.
      *
      * @param title Notification title
+     * @param requestCode Notification request code.
      * @return Notification Intent.
      */
-    private PendingIntent getNotificationIntent(String title) {
+    private PendingIntent getNotificationIntent(String title, int requestCode) {
         Intent intent = new Intent(getActiveContext(), AlarmReceiver.class);
         intent.putExtra(IntentConstants.TITLE_PARAM, title);
-        return PendingIntent.getBroadcast(getActiveContext(), 0, intent, 0);
+        return PendingIntent.getBroadcast(getActiveContext(), requestCode, intent, 0);
     }
 
     /**
