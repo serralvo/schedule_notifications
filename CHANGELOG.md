@@ -1,3 +1,7 @@
+## [0.1.1] - 2018/03/27
+
+* Some bugs in android was fixed.
+
 ## [0.1.0] - 2018/03/27
 
 * Small changes and new methods.
