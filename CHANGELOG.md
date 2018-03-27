@@ -1,3 +1,7 @@
+## [0.1.0] - 2018/03/27
+
+* Small changes and new methods.
+
 ## [0.0.4] - 2018/03/26
 
 * Changes in flutter sdk range
