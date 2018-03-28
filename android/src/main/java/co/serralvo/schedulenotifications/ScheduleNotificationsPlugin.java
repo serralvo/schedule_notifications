@@ -157,6 +157,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
         Calendar calendar = Calendar.getInstance();
         for (int day : repeatAt) {
             calendar.setTime(when);
+            calendar.setFirstDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK));
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.DAY_OF_WEEK, day + 1);
             Date scheduleDate = calendar.getTime();
