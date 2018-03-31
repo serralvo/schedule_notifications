@@ -1,3 +1,7 @@
+## [0.1.3] - 2018/03/31
+
+* Changes in methods for iOS.
+
 ## [0.1.2] - 2018/03/28
 
 * Little changes.

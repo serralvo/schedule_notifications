@@ -36,7 +36,7 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         switch method {
         case .schedule:
             if let content = NotificationContent(withContent: call.arguments as? NSArray) {
-                schedule(content)
+                prepareToSchedule(content)
             }
             result(nil)
         case .unschedule:
@@ -63,7 +63,7 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         
     }
     
-    private func schedule(_ notification: NotificationContent) {
+    private func prepareToSchedule(_ notification: NotificationContent) {
         
         let content = UNMutableNotificationContent()
         content.body = notification.title
@@ -82,7 +82,7 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
                 dateComponents.weekday = day
                 
                 let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-                fire(withContent: content, trigger: trigger)
+                schedule(withContent: content, trigger: trigger)
             }
             
         } else {
@@ -90,7 +90,7 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
             let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: notification.when)
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
             
-            fire(withContent: content, trigger: trigger)
+            schedule(withContent: content, trigger: trigger)
         }
     
     }
@@ -100,7 +100,7 @@ open class SwiftScheduleNotificationsPlugin: NSObject, FlutterPlugin {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["schedule"])
     }
  
-    private func fire(withContent content: UNNotificationContent, trigger: UNCalendarNotificationTrigger) {
+    private func schedule(withContent content: UNNotificationContent, trigger: UNCalendarNotificationTrigger) {
         
         let request = UNNotificationRequest(identifier: "schedule", content: content, trigger: trigger)
         
