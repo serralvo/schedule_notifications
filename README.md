@@ -22,6 +22,46 @@ dependencies:
   schedule_notifications: "^0.1.3"
 ```
 
+## Usage example
+
+### General
+- One shot:
+```dart
+ScheduleNotifications.schedule("Notification Text", new DateTime.now(), []);
+```
+
+- Schedule notifications:
+```dart
+List daysToRepeat = [DateTime.sunday, DateTime.monday]; // repeat every sunday and monday
+ScheduleNotifications.schedule("Notification Text", new DateTime.now(), daysToRepeat);
+```
+
+- Unschedule:
+```dart
+ScheduleNotifications.unschedule();
+```
+
+### Android
+- To set icon of notifications:
+
+```dart
+int iconResourceId;
+try {
+    iconResourceId = await _platform.invokeMethod('getIconResourceId');
+} on PlatformException catch (e) {
+    print('Error on get icon resource id');
+}
+
+ScheduleNotifications.setNotificationIcon(iconResourceId);
+```
+
+### iOS
+- To request authorization of user:
+
+```dart
+ScheduleNotifications.requestAuthorization();
+```
+
 ## Contribute
 
 We would ❤️ to see your contribution!
