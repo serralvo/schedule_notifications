@@ -1,4 +1,4 @@
-package co.serralvo.schedulenotifications;
+package co.serralvo.schedulenotifications.util;
 
 /**
  * Intent constants values.

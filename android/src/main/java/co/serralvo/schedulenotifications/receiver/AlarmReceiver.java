@@ -1,4 +1,4 @@
-package co.serralvo.schedulenotifications;
+package co.serralvo.schedulenotifications.receiver;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+
+import co.serralvo.schedulenotifications.util.IntentConstants;
+import co.serralvo.schedulenotifications.NotificationSingleton;
 
 /**
  * Alarm notification receiver.

@@ -2,7 +2,7 @@
   package="co.serralvo.schedulenotifications">
 
     <application>
-        <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".receiver.AlarmReceiver" />
     </application>
 
 </manifest>
