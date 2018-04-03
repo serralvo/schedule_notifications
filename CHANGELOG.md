@@ -1,3 +1,7 @@
+## [0.1.4] - 2018/04/03
+
+* Changes in methods for android.
+
 ## [0.1.3] - 2018/03/31
 
 * Changes in methods for iOS.
