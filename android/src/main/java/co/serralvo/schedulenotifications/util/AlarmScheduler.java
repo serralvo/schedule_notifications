@@ -6,12 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import co.serralvo.schedulenotifications.model.business.AlarmSharedPreferences;
 import co.serralvo.schedulenotifications.receiver.AlarmReceiver;
 
 /**
@@ -40,27 +39,24 @@ public class AlarmScheduler {
         String when = (String) arguments.get(1);
         List<Integer> repeatAt = (List<Integer>) arguments.get(2);
 
-        Date date = convertToDate(when);
+        Date date = DateConverter.convertToDate(when);
+
+        AlarmSharedPreferences.saveAlarm(context, title, when, repeatAt);
 
         scheduleNotification(title, date, repeatAt, context);
     }
 
     /**
-     * Schedule a notification.
+     * Reschedule notifications.
      *
-     * @param title Notification title.
-     * @param date Date to schedule.
-     * @param repeatAt Days to repeat the alarm.
      * @param context The context.
      */
-    public static void scheduleNotification(String title, Date date, List<Integer> repeatAt, Context context) {
-        sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
-        if (repeatAt.size() > 0) {
-            scheduleRepeatNotification(date, title, repeatAt, context);
-        } else {
-            scheduleOneShotNotification(date, title, context);
-        }
+    public static void rescheduleNotifications(Context context) {
+        Log.i(LOG_TAG, "Rescheduling alarms");
+        String title = AlarmSharedPreferences.getTitle(context);
+        Date date = AlarmSharedPreferences.getDate(context);
+        List<Integer> repeatAt = AlarmSharedPreferences.getDaysToRepeat(context);
+        scheduleNotification(title, date, repeatAt, context);
     }
 
     /**
@@ -76,6 +72,26 @@ public class AlarmScheduler {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, day, intent, 0);
             pendingIntent.cancel();
             sAlarmManager.cancel(pendingIntent);
+        }
+
+        AlarmSharedPreferences.clear(context);
+    }
+
+    /**
+     * Schedule a notification.
+     *
+     * @param title Notification title.
+     * @param date Date to schedule.
+     * @param repeatAt Days to repeat the alarm.
+     * @param context The context.
+     */
+    private static void scheduleNotification(String title, Date date, List<Integer> repeatAt, Context context) {
+        sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        if (repeatAt.size() > 0) {
+            scheduleRepeatNotification(date, title, repeatAt, context);
+        } else {
+            scheduleOneShotNotification(date, title, context);
         }
     }
 
@@ -135,27 +151,6 @@ public class AlarmScheduler {
      */
     private static PendingIntent getNotificationIntent(String title, int requestCode, Context context) {
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(IntentConstants.TITLE_PARAM, title);
         return PendingIntent.getBroadcast(context, requestCode, intent, 0);
-    }
-
-    /**
-     * Convert a date string to Date object.
-     * <p>
-     * Format: "yyyy-MM-dd HH:mm:ss".
-     *
-     * @param dateStr Date string to convert.
-     * @return Date converted.
-     */
-    private static Date convertToDate(String dateStr) {
-        Date date = null;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = format.parse(dateStr);
-            System.out.println(date);
-        } catch (ParseException ex) {
-            Log.e(LOG_TAG, "Error on convert date: ", ex);
-        }
-        return date;
     }
 }

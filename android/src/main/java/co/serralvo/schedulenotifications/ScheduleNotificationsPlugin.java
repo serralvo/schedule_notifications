@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.List;
 
+import co.serralvo.schedulenotifications.model.business.AlarmSharedPreferences;
 import co.serralvo.schedulenotifications.util.AlarmScheduler;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -81,6 +82,6 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
      * @param arguments Icon resource id.
      */
     private void setNotificationIcon(List<Object> arguments) {
-        NotificationSingleton.getInstance().setNotificationIcon((int) arguments.get(0));
+        AlarmSharedPreferences.saveIcon(getActiveContext(), (int) arguments.get(0));
     }
 }

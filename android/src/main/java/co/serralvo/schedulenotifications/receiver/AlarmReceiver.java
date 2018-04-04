@@ -10,8 +10,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
-import co.serralvo.schedulenotifications.util.IntentConstants;
-import co.serralvo.schedulenotifications.NotificationSingleton;
+import co.serralvo.schedulenotifications.model.business.AlarmSharedPreferences;
 
 /**
  * Alarm notification receiver.
@@ -35,7 +34,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        String title = intent.getStringExtra(IntentConstants.TITLE_PARAM);
+        String title = AlarmSharedPreferences.getTitle(context);
+        int icon = AlarmSharedPreferences.getIcon(context);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT);
@@ -50,7 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(NotificationSingleton.getInstance().getNotificationIcon())
+                .setSmallIcon(icon)
                 .setContentTitle(title)
                 .setContentIntent(actionPendingIntent)
                 .setAutoCancel(true)
