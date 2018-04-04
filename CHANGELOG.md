@@ -1,3 +1,7 @@
+## [0.1.5] - 2018/04/04
+
+* Rescheduling the alarms on reboot device (android only).
+
 ## [0.1.4] - 2018/04/03
 
 * Changes in methods for android.
