@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Future<Null> _getIconResourceId() async {
+  Future<dynamic> _getIconResourceId() async {
     int iconResourceId;
     try {
       iconResourceId = await _platform.invokeMethod('getIconResourceId');

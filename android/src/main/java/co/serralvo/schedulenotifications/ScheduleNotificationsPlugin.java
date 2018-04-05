@@ -48,6 +48,7 @@ public class ScheduleNotificationsPlugin implements MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
+        AlarmScheduler.initialize(getActiveContext());
         switch (call.method) {
             case SCHEDULE_NOTIFICATION_METHOD_NAME:
                 if (call.arguments != null && call.arguments instanceof List) {

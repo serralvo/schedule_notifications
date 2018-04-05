@@ -29,6 +29,13 @@ public class AlarmScheduler {
     private static AlarmManager sAlarmManager;
 
     /**
+     * Initialize the AlarmManager.
+     */
+    public static void initialize(Context context) {
+        sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    }
+
+    /**
      * Schedule a notification.
      *
      * @param arguments Method arguments.
@@ -86,8 +93,6 @@ public class AlarmScheduler {
      * @param context The context.
      */
     private static void scheduleNotification(String title, Date date, List<Integer> repeatAt, Context context) {
-        sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-
         if (repeatAt.size() > 0) {
             scheduleRepeatNotification(date, title, repeatAt, context);
         } else {

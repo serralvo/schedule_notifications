@@ -135,7 +135,9 @@ public class AlarmSharedPreferences {
      */
     public static void clear(Context context) {
         SharedPreferences.Editor editor = getPreferences(context).edit();
+        int icon = getIcon(context);
         editor.clear();
+        editor.putInt(ICON_KEY, icon);
         editor.apply();
     }
 
