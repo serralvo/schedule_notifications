@@ -7,7 +7,6 @@
 //
 
 import Flutter
-import UIKit
 import UserNotifications
 
 enum Methods: String {

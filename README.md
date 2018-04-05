@@ -19,7 +19,7 @@ Add this to your package's pubspec.yaml file:
 
 ```
 dependencies:
-  schedule_notifications: "^0.1.6"
+  schedule_notifications: "^0.1.7"
 ```
 
 ## Usage example
