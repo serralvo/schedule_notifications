@@ -18,20 +18,22 @@
     result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
   } else if ([@"scheduleNotification" isEqualToString:call.method]) {
 
-      NotificationContent * content = [[NotificationContent alloc] initWithContent:call.arguments];
+    NotificationContent * content = [[NotificationContent alloc] initWithContent:call.arguments];
 
       if (content != [NSNull class] && content != nil) {
           [self prepareToScheduleWithNotificationContent:content];
       }
 
-      [self prepareToScheduleWithNotificationContent:call.arguments];
   } else if ([@"unscheduleNotifications" isEqualToString:call.method]) {
       [self unschedule];
   } else if ([@"requestAuthorization" isEqualToString:call.method]) {
       [self requestAuthorization];
   } else {
       result(FlutterMethodNotImplemented);
+      return;
   }
+    
+    result(nil);
 }
 
 // MARK: Private
